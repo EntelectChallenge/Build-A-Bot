@@ -27,11 +27,11 @@
             result += $"Collected: {Collected}\tElapsed Time: {ElapsedTime}\tGame Tick: {GameTick}\n";
             result += $"Position: ({X}, {Y})\n\n";
             // Print hero window.
-            for (int y = 0; y < HeroWindow[0].Length; y++)
+            for (int y = HeroWindow[0].Length - 1; y >= 0; y--)
             {
                 for (int x = 0; x < HeroWindow.Length; x++)
                 {
-                    result += HeroWindow[x][y] + " ";
+                    result += HeroWindow[x][y];
                 }
                 result += "\n";
             }
