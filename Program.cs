@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using BuildABot.Models;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -7,6 +8,7 @@ namespace BuildABot
     public class Program
     {
         private static IConfigurationRoot Configuration;
+        private static Guid BotId;
 
         private static void Main(string[] args)
         {
@@ -54,6 +56,27 @@ namespace BuildABot
             // Start connection
             connection.StartAsync().Wait();
             Console.WriteLine("Connected to Runner!");
+
+            // Listen for registered event.
+            connection.On<Guid>("Registered", (id) =>
+            {
+                Console.WriteLine($"Bot Registered with ID: {id}");
+            });
+
+            // Print bot state.
+            connection.On<BotStateDTO>("ReceiveBotState", (botState) =>
+            {
+                Console.WriteLine(botState.ToString());
+            });
+
+            // Register bot.
+            connection.InvokeAsync("Register", token, botNickname).Wait();
+
+            // Loop while connected.
+            while (connection.State == HubConnectionState.Connected || connection.State == HubConnectionState.Connecting || connection.State == HubConnectionState.Reconnecting)
+            {
+                Thread.Sleep(300);
+            }
         }
     }
 }
