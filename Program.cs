@@ -1,4 +1,5 @@
 ﻿using BuildABot.Models;
+using BuildABot.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ namespace BuildABot
     public class Program
     {
         private static IConfigurationRoot Configuration;
-        private static Guid BotId;
+        private static BotService botService;
 
         private static void Main(string[] args)
         {
@@ -61,16 +62,16 @@ namespace BuildABot
             connection.On<Guid>("Registered", (id) =>
             {
                 Console.WriteLine($"Bot Registered with ID: {id}");
-                BotId = id;
+                botService.SetBotId(id);
             });
 
             // Print bot state.
             connection.On<BotStateDTO>("ReceiveBotState", (botState) =>
             {
                 Console.WriteLine(botState.ToString());
-                // Respond with simple command.
-                BotCommand command = new BotCommand() { Action = Enums.InputCommand.RIGHT, BotId = BotId };
-                connection.InvokeAsync("SendPlayerCommand", command).Wait();
+                // Have bot service process the bot state.
+                BotCommand botCommand = botService.ProcessState(botState);
+                connection.InvokeAsync("SendPlayerCommand", botCommand);
             });
 
             // Register bot.
