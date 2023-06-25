@@ -61,12 +61,16 @@ namespace BuildABot
             connection.On<Guid>("Registered", (id) =>
             {
                 Console.WriteLine($"Bot Registered with ID: {id}");
+                BotId = id;
             });
 
             // Print bot state.
             connection.On<BotStateDTO>("ReceiveBotState", (botState) =>
             {
                 Console.WriteLine(botState.ToString());
+                // Respond with simple command.
+                BotCommand command = new BotCommand() { Action = Enums.InputCommand.RIGHT, BotId = BotId };
+                connection.InvokeAsync("SendPlayerCommand", command).Wait();
             });
 
             // Register bot.
