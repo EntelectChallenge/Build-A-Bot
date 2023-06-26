@@ -9,7 +9,7 @@ namespace BuildABot
     public class Program
     {
         private static IConfigurationRoot Configuration;
-        private static BotService botService;
+        private static BotService botService = new();
 
         private static void Main(string[] args)
         {
