@@ -7,6 +7,7 @@
         Collectible,
         Hazard,
         Platform,
-        Ladder
+        Ladder,
+        Opponent
     }
 }

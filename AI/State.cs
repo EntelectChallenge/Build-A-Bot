@@ -17,6 +17,6 @@ namespace BuildABot.AI
             SM.ChangeState(NewState);
         }
 
-        public abstract InputCommand ProcessState(BotStateDTO BotState);
+        public abstract InputCommand? ProcessState(BotStateDTO BotState);
     }
 }

@@ -18,7 +18,7 @@ namespace BuildABot.AI
             CurrentState = NewState;
         }
 
-        public InputCommand ProcessState(BotStateDTO BotState)
+        public InputCommand? ProcessState(BotStateDTO BotState)
         {
             return CurrentState.ProcessState(BotState);
         }

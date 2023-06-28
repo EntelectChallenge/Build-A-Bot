@@ -1,6 +1,8 @@
 ﻿using BuildABot.AI.DataStructures.Spatial;
 using BuildABot.Enums;
 using BuildABot.Models;
+using BuildABot.AI.Algorithms;
+using Path = BuildABot.AI.DataStructures.Pathfinding.Path;
 
 namespace BuildABot.AI.States
 {
@@ -11,8 +13,13 @@ namespace BuildABot.AI.States
 
         public Searching(StateMachine SM) : base(SM) {}
 
-        public override InputCommand ProcessState(BotStateDTO BotState)
+        public override InputCommand? ProcessState(BotStateDTO BotState)
         {
+            if (SearchForCollectibles(BotState) != null)
+            {
+                return null;
+            }
+
             if (ShouldJump(BotState))
             {
                 return InputCommand.UPRIGHT;
@@ -121,6 +128,51 @@ namespace BuildABot.AI.States
                 }
             }
             return collectibles;
+        }
+
+        private Path? SearchForCollectibles(BotStateDTO BotState)
+        {
+            var playerBounds = GetPlayerBoundingBox(BotState);
+
+            // Find all collectibles
+            List<Point> collectibles = FindCollectibles(BotState);
+
+            if (collectibles.Count <= 0)
+            {
+                return null;
+            }
+
+            collectibles.Sort((a, b) =>
+            {
+                return Pathfinding.ManhattanDistance(playerBounds.Position, a) - Pathfinding.ManhattanDistance(playerBounds.Position, b);
+            }); 
+
+            // Get 3 closest collectibles
+            List<Point> closestCollectibles = collectibles
+                .Take(3).ToList();
+
+            // Calculate which collectible has the shortest path
+            Point closestCollectibleByPath = closestCollectibles.First();
+            Path? closestPath = Pathfinding.AStarSearch(BotState, playerBounds.Position,  closestCollectibleByPath);
+            foreach (var collectible in closestCollectibles.Skip(1))
+            {
+                int closestPathDistance = closestPath is Path path ? path.Length : Int32.MaxValue;
+                var newPath = Pathfinding.AStarSearch(BotState, playerBounds.Position, collectible);
+
+                if (newPath is Path newP && newP.Length < closestPathDistance)
+                {
+                    closestCollectibleByPath = collectible;
+                    closestPath = newPath;
+                }
+            }
+
+            // If closestPath is null, we haven't managed to pathfind to any collectibles, so keep searching.
+            if (closestPath is Path)
+            {
+                ChangeState(new Collecting(SM, closestPath));
+                return closestPath;
+            }
+            return null;
         }
     }
 }

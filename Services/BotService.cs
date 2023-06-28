@@ -9,14 +9,14 @@ namespace BuildABot.Services
         private Guid BotId;
         private StateMachine SM = new();
 
-        public BotCommand ProcessState(BotStateDTO botState)
+        public BotCommand? ProcessState(BotStateDTO botState)
         {
-            InputCommand action = SM.ProcessState(botState);
-            return new BotCommand
+            InputCommand? maybeAction = SM.ProcessState(botState);
+            return maybeAction is InputCommand action ? new BotCommand
             {
                 BotId = BotId,
                 Action = action,
-            };
+            } : null;
         }
 
         public void SetBotId(Guid botId)

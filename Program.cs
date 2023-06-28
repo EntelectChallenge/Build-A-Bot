@@ -70,8 +70,11 @@ namespace BuildABot
             {
                 Console.WriteLine(botState.ToString());
                 // Have bot service process the bot state.
-                BotCommand botCommand = botService.ProcessState(botState);
-                connection.InvokeAsync("SendPlayerCommand", botCommand);
+                BotCommand? botCommand = botService.ProcessState(botState);
+                if (botCommand != null)
+                {
+                    connection.InvokeAsync("SendPlayerCommand", botCommand);
+                }
             });
 
             // Register bot.
