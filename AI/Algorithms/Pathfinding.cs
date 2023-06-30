@@ -36,8 +36,6 @@ namespace BuildABot.AI.Algorithms
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
 
-                var neighbours = Neighbours(state, currentNode);
-
                 foreach (var neighbour in Neighbours(state, currentNode))
                 {
                     if (closedSet.Contains(neighbour))

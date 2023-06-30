@@ -16,7 +16,7 @@
 
         public void Add(Node node)
         {
-            Nodes.Add(node);
+            Nodes.Insert(0, node);
         }
 
         public int Length => Nodes.Count;

@@ -34,7 +34,7 @@ namespace BuildABot.AI.States
         private BoundingBox GetPlayerBoundingBox(BotStateDTO state)
         {
             var x = (state.HeroWindow.Length / 2) - 1;
-            var y = state.HeroWindow[0].Length / 2;
+            var y = (state.HeroWindow[0].Length / 2) - 1;
             return new BoundingBox(x, y, HeroWidth, HeroHeight);
         }
 
@@ -43,7 +43,7 @@ namespace BuildABot.AI.States
             var playerBounds = GetPlayerBoundingBox(state);
             for (int x = playerBounds.Left; x <= playerBounds.Right; x++)
             {
-                if (state.HeroWindow[x][playerBounds.Bottom - 2] == (int)ObjectType.Platform)
+                if (state.HeroWindow[x][playerBounds.Bottom - 1] == (int)ObjectType.Platform)
                     return true;
             }
             return false;
@@ -54,7 +54,7 @@ namespace BuildABot.AI.States
             var playerBounds = GetPlayerBoundingBox(state);
             for (int x = playerBounds.Left; x <= playerBounds.Right; x++)
             {
-                if (state.HeroWindow[x][playerBounds.Bottom - 2] == (int)ObjectType.Solid)
+                if (state.HeroWindow[x][playerBounds.Bottom - 1] == (int)ObjectType.Solid)
                     return true;
             }
             return false;
@@ -65,7 +65,7 @@ namespace BuildABot.AI.States
             var playerBounds = GetPlayerBoundingBox(state);
             for (int x = playerBounds.Left; x < playerBounds.Right; x++)
             {
-                for (int y = playerBounds.Bottom - 1; y <= playerBounds.Top; y++)
+                for (int y = playerBounds.Bottom ; y <= playerBounds.Top; y++)
                 {
                     if (state.HeroWindow[x][y] == (int)ObjectType.Ladder) return true;
                 }
@@ -81,7 +81,7 @@ namespace BuildABot.AI.States
 
             for (int x = startX; x < endX; x++)
             {
-                for (int y = position.Bottom - 2; y <= position.Top + 1; y++)
+                for (int y = position.Bottom - 1; y <= position.Top + 1; y++)
                 {
                     if (state.HeroWindow[x][y] == (int)ObjectType.Hazard)
                     {
@@ -100,7 +100,7 @@ namespace BuildABot.AI.States
 
             for (int x = startX; x <= endX + 2; x++)
             {
-                if (state.HeroWindow[x][playerBounds.Bottom - 1] == (int)ObjectType.Solid)
+                if (state.HeroWindow[x][playerBounds.Bottom] == (int)ObjectType.Solid)
                     return true;
             }
             return false;
