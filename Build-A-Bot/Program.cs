@@ -1,10 +1,8 @@
-﻿using BuildABot.Enums;
-using BuildABot.Models;
+﻿using BuildABot.Models;
+using BuildABot.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
-Guid botId;
 
 IConfigurationRoot configuration;
 
@@ -39,17 +37,18 @@ var connection = new HubConnectionBuilder()
 connection.StartAsync().Wait();
 Console.WriteLine("Connected to Runner!");
 
+BotService botService = new();
 
 connection.On<Guid>("Registered", (id) =>
 {
     Console.WriteLine($"Bot Registered with ID: {id}");
-    botId = id;
+    botService.SetBotId(id);
 
     connection.On<BotStateDTO>("ReceiveBotState", (botState) =>
     {
         Console.WriteLine(botState.ToString());
-        BotCommand command = new BotCommand() { Action = (int)BotAction.Right, BotId = botId };
-        connection.InvokeAsync("SendPlayerCommand", command).Wait();
+        BotCommand botCommand = botService.ProcessState(botState);
+        connection.InvokeAsync("SendPlayerCommand", botCommand);
     });
 });
 
