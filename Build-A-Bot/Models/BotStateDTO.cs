@@ -1,3 +1,5 @@
+using BuildABot.Enums;
+
 namespace BuildABot.Models;
 public class BotStateDTO
 {
@@ -13,6 +15,14 @@ public class BotStateDTO
     public required int[][] HeroWindow { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
+
+    public override string ToString()
+    {
+        return $"""
+        Elapsed Time: {ElapsedTime}, Game Tick: {GameTick}
+        Position: ({X}, {Y}), DirectionState: {(BotAction)DirectionState}
+        """;
+    }
 }
 public struct PowerUpLocation
 {
