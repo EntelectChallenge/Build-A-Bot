@@ -1,0 +1,10 @@
+{
+    "profiles": {
+        "Build-A-Bot": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "Token": "8bdf0905-1fbf-48b6-b38d-5594f20e52f1"
+            }
+        }
+    }
+}
